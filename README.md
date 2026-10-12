@@ -16,15 +16,19 @@ Built with FastAPI, SQLAlchemy, and SQLite as a backend development portfolio pr
 - Interactive Swagger API documentation
 - Automated API tests using Pytest
 
+
 ## Screenshots
 
 ### Swagger API Documentation
 
+Interactive API documentation for product management,
+inventory tracking, sales, and analytics.
+
 ![Swagger API Documentation](screenshots/swagger-ui.png)
 
-### Pytest Results
+### Automated Test Results
 
-Seven automated tests passed successfully.
+Seven automated tests passed using Pytest.
 
 ![Pytest Results](screenshots/pytest-results.png)
 
