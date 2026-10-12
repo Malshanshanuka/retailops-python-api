@@ -47,3 +47,34 @@ class Product(Base):
         default=lambda: datetime.now(timezone.utc),
         nullable=False
     )
+
+class Sale(Base):
+    __tablename__ = "sales"
+
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True
+    )
+
+    product_id: Mapped[int] = mapped_column(
+        Integer, nullable=False
+    )
+
+    quantity: Mapped[int] = mapped_column(
+        Integer, nullable=False
+    )
+
+    unit_price: Mapped[Decimal] = mapped_column(
+        Numeric(12, 2), nullable=False
+    )
+
+    total_amount: Mapped[Decimal] = mapped_column(
+        Numeric(12, 2), nullable=False
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False
+    )
+
+

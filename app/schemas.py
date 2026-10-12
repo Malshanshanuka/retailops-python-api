@@ -16,3 +16,23 @@ class ProductResponse(ProductCreate):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+from datetime import datetime
+
+
+class SaleCreate(BaseModel):
+    product_id: int = Field(gt=0)
+    quantity: int = Field(gt=0)
+
+
+class SaleResponse(BaseModel):
+    id: int
+    product_id: int
+    quantity: int
+    unit_price: Decimal
+    total_amount: Decimal
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
