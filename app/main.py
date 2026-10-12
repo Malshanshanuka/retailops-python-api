@@ -14,6 +14,9 @@ from app.schemas import (
     SaleCreate,
     SaleResponse
 )
+from decimal import Decimal
+from sqlalchemy import func
+from sqlalchemy import func
 
 Base.metadata.create_all(bind=engine)
 
@@ -180,5 +183,66 @@ def get_sale(
         )
 
     return sale
+
+
+@app.get("/analytics/summary")
+def get_sales_summary(
+    db: Session = Depends(get_db)
+):
+    total_revenue = db.query(
+        func.sum(Sale.total_amount)
+    ).scalar() or Decimal("0.00")
+
+    total_sales = db.query(
+        func.count(Sale.id)
+    ).scalar() or 0
+
+    total_units = db.query(
+        func.sum(Sale.quantity)
+    ).scalar() or 0
+
+    low_stock_count = db.query(
+        func.count(Product.id)
+    ).filter(
+        Product.quantity <= Product.low_stock_threshold
+    ).scalar() or 0
+
+    return {
+        "total_revenue": str(total_revenue),
+        "total_sales": total_sales,
+        "total_units_sold": total_units,
+        "low_stock_products": low_stock_count
+    }
+
+
+@app.get("/analytics/top-products")
+def get_top_products(db: Session = Depends(get_db)):
+    results = (
+        db.query(
+            Sale.product_id,
+            func.sum(Sale.quantity).label("units_sold"),
+            func.sum(Sale.total_amount).label("revenue")
+        )
+        .group_by(Sale.product_id)
+        .order_by(func.sum(Sale.quantity).desc())
+        .limit(5)
+        .all()
+    )
+
+    top_products = []
+
+    for row in results:
+        product = db.get(Product, row.product_id)
+
+        top_products.append({
+            "product_id": row.product_id,
+            "product_name": product.name if product else "Deleted Product",
+            "units_sold": row.units_sold,
+            "revenue": str(row.revenue)
+        })
+
+    return top_products
+
+
 
 
